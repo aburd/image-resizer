@@ -54,22 +54,14 @@ function makeJpgPsd(image, source) {
 		d.activeLayer.name = 'photo1';
 		
 		// RESIZING
-		// do the resizing.  if height > width (portrait-mode) resize based on width.  otherwise, resize based on height
-		if ( parseInt(height) >= parseInt(width) ) {
-			// Check to see the dimensions of the actual picture to see the best way to resize
-			if(d.height > d.width) {
-				d.resizeImage(UnitValue(width,"px"), null, null, ResampleMethod.BICUBIC);
-			} else {
-				d.resizeImage(null, UnitValue(height,"px"), null, ResampleMethod.BICUBIC);	
-			}
+		// do the resizing based on which ratio is greater, widths or heights
+		var widthRatio 	= parseInt(width)/d.width,
+				heightRatio = parseInt(height)/d.height;
+		if ( widthRatio >= heightRatio ) {
+			d.resizeImage(UnitValue(width,"px"), null, null, ResampleMethod.BICUBIC);
 		}
 		else {
-			// Check to see the dimensions of the actual picture to see the best way to resize
-			if(d.width > d.height) {
-				d.resizeImage(null, UnitValue(height,"px"), null, ResampleMethod.BICUBIC);	
-			} else {
-				d.resizeImage(UnitValue(width,"px"), null, null, ResampleMethod.BICUBIC);
-			}
+			d.resizeImage(null, UnitValue(height,"px"), null, ResampleMethod.BICUBIC);	
 		}
 		// Only resize the canvas if both a height and width are not empty
 		if(height !== "" && width !== ""){
