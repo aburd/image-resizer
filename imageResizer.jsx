@@ -6,10 +6,13 @@
 // --------------------------------------------
 // INITIAL DECLARATIONS AND SETTINGS FROM USER
 // --------------------------------------------
-var sourcePath = $.fileName;
-var splitPath = sourcePath.split('/');
-splitPath.pop();
-sourcePath = splitPath.join('/') + "/";
+var sourcePath = prompt("Please input path to file", "C:\MyDocuments...");
+if(sourcePath === "") {
+	var sourcePath = $.fileName;
+	var splitPath = sourcePath.split('/');
+	splitPath.pop();
+	sourcePath = splitPath.join('/') + "/";
+}
 var fileExtReg = /(\.jpg|\.jpeg|\.tiff|\.tif|\.gif|\.png|\.bmp)/ig;
 
 if( sourcePath == '' ) {
@@ -17,11 +20,11 @@ if( sourcePath == '' ) {
 }
 
 // Get initial dimensions
-var width = prompt("Input Width in pixels","","Width");
-var height = prompt("Input Height in pixels","","Height");
-var jpgQuality = prompt("Input jpeg quality", "", "1 - 10");
+var width = prompt("Input Width in pixels", "500");
+var height = prompt("Input Height in pixels", "200");
+var jpgQuality = prompt("Input jpeg quality", "5");
 if(jpgQuality < 1 || jpgQuality > 10) {
-	jpgQuality = prompt("Input jpeg quality", "", "1 - 10");
+	jpgQuality = prompt("Input jpeg quality", "5");
 }
 
 
@@ -36,7 +39,7 @@ function getDirContents(path) {
 		for( var i = 0; i < fileList.length; i++ ) {
 			var curFile = fileList[i]; 
 			
-			if( curFile instanceof Folder ) {
+			if( curFile instanceof Folder && curFile.name.toLowerCase() !== "jpg" && curFile.name.toLowerCase() !== "psd" ) {
 				getDirContents(curFile);
 			} else if( fileExtReg.test(curFile.name) ) {
 				makeJpgPsd(curFile, sourceFolder);
@@ -54,14 +57,13 @@ function makeJpgPsd(image, source) {
 		d.activeLayer.name = 'photo1';
 		
 		// RESIZING
-		// do the resizing based on which ratio is greater, widths or heights
-		var widthRatio 	= parseInt(width)/d.width,
-				heightRatio = parseInt(height)/d.height;
+		// do the resizing based on which ratio is greater, oldWidth -- newWidth || oldHeight -- newHeight ?
+		var widthRatio	= parseInt(width)/d.width;
+		var heightRatio	= parseInt(height)/d.height;
 		if ( widthRatio >= heightRatio ) {
 			d.resizeImage(UnitValue(width,"px"), null, null, ResampleMethod.BICUBIC);
-		}
-		else {
-			d.resizeImage(null, UnitValue(height,"px"), null, ResampleMethod.BICUBIC);	
+		} else {
+			d.resizeImage(null, UnitValue(height,"px"), null, ResampleMethod.BICUBIC);
 		}
 		// Only resize the canvas if both a height and width are not empty
 		if(height !== "" && width !== ""){
